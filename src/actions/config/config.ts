@@ -1,14 +1,14 @@
 import {
   createTemplateAction,
   executeShellCommand,
-} from "@backstage/plugin-scaffolder-backend";
-import { getNpmCommand } from "../../utils/getNpmCommand";
+} from "@backstage/plugin-scaffolder-node";
+import { getYarnCommand } from "../../utils/getYarnCommand";
 
-export function createNpmConfigAction() {
+export function createYarnConfigAction() {
   return createTemplateAction<{ arguments: string[] }>({
-    id: "npm:config",
+    id: "yarn:config",
     description:
-      "Runs npm config with the given arguments in the task workspace directory",
+      "Runs yarn config with the given arguments in the task workspace directory",
     supportsDryRun: true,
     schema: {
       input: {
@@ -17,7 +17,7 @@ export function createNpmConfigAction() {
         properties: {
           arguments: {
             title: "Arguments",
-            description: "The arguments to pass to the npm config command",
+            description: "The arguments to pass to the yarn config command",
             type: "array",
             items: {
               type: "string",
@@ -28,27 +28,20 @@ export function createNpmConfigAction() {
     },
     async handler(ctx) {
       try {
-        console.log(`Running npm config in ${ctx.workspacePath}`);
-        ctx.logger.info(`Running npm config in ${ctx.workspacePath}`);
+        ctx.logger.info(`Running yarn config in ${ctx.workspacePath}`);
         ctx.logger.info(`Input: ${ctx.input.arguments}`);
 
-        const npm = getNpmCommand(ctx);
-
-        ctx.logger.info(
-          `OS platform is ${process.platform}, using '${npm}' as command`
-        );
+        const yarn = getYarnCommand(ctx);
 
         await executeShellCommand({
-          command: npm,
+          command: yarn,
           args: ["config", ...ctx.input.arguments],
           logStream: ctx.logStream,
           options: { cwd: ctx.workspacePath },
         });
 
-        console.log("Done running npm config");
-        ctx.logger.info(`Done running npm config`);
+        ctx.logger.info(`Done running yarn config`);
       } catch (err) {
-        console.error(err);
         ctx.logger.error(err);
         throw err;
       }

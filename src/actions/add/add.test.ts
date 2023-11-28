@@ -1,25 +1,25 @@
 import { PassThrough } from 'stream';
-import { createNpmExecAction } from './exec';
+import { createYarnAddAction } from './add';
 import { getVoidLogger } from '@backstage/backend-common';
-import { executeShellCommand } from '@backstage/plugin-scaffolder-backend';
+import { executeShellCommand } from '@backstage/plugin-scaffolder-node';
 
-jest.mock('@backstage/plugin-scaffolder-backend', () => ({
-  ...jest.requireActual('@backstage/plugin-scaffolder-backend'),
+jest.mock('@backstage/plugin-scaffolder-node', () => ({
+  ...jest.requireActual('@backstage/plugin-scaffolder-node'),
   executeShellCommand: jest.fn(),
 }));
 
-describe('npm:exec', () => {
+describe('yarn:add', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   it('should call action', async () => {
-    const action = createNpmExecAction();
+    const action = createYarnAddAction();
 
     const logger = getVoidLogger();
 
     await action.handler({
-      input: { arguments: [] },
+      input: { packageToInstall: 'test' },
       workspacePath: '/tmp',
       logger,
       logStream: new PassThrough(),
@@ -31,21 +31,20 @@ describe('npm:exec', () => {
 
     expect(executeShellCommand).toHaveBeenCalledWith(
       expect.objectContaining({
-        command: expect.stringContaining('npm'),
-        args: expect.arrayContaining(['exec']),
+        command: expect.stringContaining('yarn'),
+        args: expect.arrayContaining(['add']),
       }),
     );
   });
 
-  it('should call action with given arguments', async () => {
-    const action = createNpmExecAction();
+  it('should call action with proper package to install', async () => {
+    const action = createYarnAddAction();
 
     const logger = getVoidLogger();
-
-    const mockArgs = ['one', 'two', 'three'];
+    const packageToInstallString = 'my-package';
 
     await action.handler({
-      input: { arguments: mockArgs },
+      input: { packageToInstall: packageToInstallString },
       workspacePath: '/tmp',
       logger,
       logStream: new PassThrough(),
@@ -57,8 +56,8 @@ describe('npm:exec', () => {
 
     expect(executeShellCommand).toHaveBeenCalledWith(
       expect.objectContaining({
-        command: expect.stringContaining('npm'),
-        args: expect.arrayContaining(['exec', ...mockArgs]),
+        command: expect.stringContaining('yarn'),
+        args: expect.arrayContaining(['add', packageToInstallString]),
       }),
     );
   });

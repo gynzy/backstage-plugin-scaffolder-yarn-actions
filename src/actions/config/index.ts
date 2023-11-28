@@ -1,1 +1,1 @@
-export { createNpmConfigAction } from './config';
+export { createYarnConfigAction } from './config';

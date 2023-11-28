@@ -1,24 +1,25 @@
-# backstage-plugin-scaffolder-npm-actions package
+# backstage-plugin-scaffolder-yarn-actions package
 
-This is a `npm` actions plugin for the `scaffolder-backend` in Backstage.
+This is a `yarn` actions plugin for the `scaffolder-backend` in Backstage.
 
-This contains a collection of actions for using with npm:
+This contains a collection of actions for using with yarn:
 
-- npm:init
-- npm:install
-- npm:exec
-- npm:config
+- yarn:add
+- yarn:config
+- yarn:create
+- yarn:install
+- yarn:run
 
 ## Prerequisites
 
-- Node and NPM must be installed in the environment your Backstage instance is running in, but it will most likely already be there since your Backstage instance runs in Node.
+- Node and yarn must be installed in the environment your Backstage instance is running in, but it will most likely already be there since your Backstage instance runs in Node.
 
 ## Getting started
 
 In the root directory of your Backstage project:
 
 ```
-yarn add --cwd packages/backend @mdude2314/backstage-plugin-scaffolder-npm-actions
+yarn add --cwd packages/backend @gynzy/backstage-plugin-scaffolder-yarn-actions
 ```
 
 Add the actions you'd like to the scaffolder:
@@ -27,11 +28,12 @@ Add the actions you'd like to the scaffolder:
 // packages/backend/src/plugins/scaffolder.ts
 
 import {
-  createNpmExecAction,
-  createNpmInitAction,
-  createNpmInstallAction,
-  createNpmConfigAction,
-} from '@mdude2314/backstage-plugin-scaffolder-npm-actions';
+  createYarnAddAction,
+  createYarnConfigAction,
+  createYarnCreateAction,
+  createYarnInstallAction,
+  createYarnRunAction,
+} from '@gynzy/backstage-plugin-scaffolder-yarn-actions';
 import { ScmIntegrations } from '@backstage/integration';
 import { createBuiltinActions, createRouter } from '@backstage/plugin-scaffolder-backend';
 
@@ -46,10 +48,11 @@ const builtInActions = createBuiltinActions({
 });
 
 const actions = [
-    createNpmExecAction(),
-    createNpmInitAction(),
-    createNpmInstallAction(),
-    createNpmConfigAction(),
+    createYarnAddAction(),
+    createYarnConfigAction(),
+    createYarnCreateAction(),
+    createYarnInstallAction(),
+    createYarnRunAction(),
   ...builtInActions
 ];
 
@@ -70,45 +73,39 @@ return await createRouter({
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: npm-demo
-  title: My npm demo template
-  description: Run npm commands in the task's working directory
+  name: yarn-demo
+  title: My yarn demo template
+  description: Run yarn commands in the task's working directory
 spec:
-  owner: mdude2314
+  owner: developers
   type: service
 
   parameters:
-    - title: Npm init
+    - title: Yarn add
       properties:
         packageToInstall:
           title: Package to install
           type: string
-          description: The name of the npm package to install
-        execArgs:
-          title: Args for exec
+          description: The name of the yarn package to install
+        runArgs:
+          title: Args for yarn run
           type: array
-          description: Arguments to pass to the exec command
+          description: Command and arguments to pass to yarn run
 
   steps:
-    - id: npm-init
-      name: init
-      action: npm:init
+    - id: yarn-create
+      name: create
+      action: yarn:create
 
-    - id: npm-install
-      name: install
-      action: npm:install
+    - id: yarn-add
+      name: add
+      action: yarn:add
       input:
         packageToInstall: ${{ parameters.packageToInstall }}
 
-    - id: npm-config
-      name: config
-      action: npm:config
+    - id: yarn-run
+      name: run
+      action: yarn:run
       input:
-        args: ${{ parameters.execArgs }}
-
-    - id: npm-exec
-      name: exec
-      action: npm:exec
-      input:
-        args: ${{ parameters.execArgs }}
+        args: ${{ parameters.runArgs }}
 ```

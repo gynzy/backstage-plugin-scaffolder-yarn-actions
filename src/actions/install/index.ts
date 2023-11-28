@@ -1,1 +1,1 @@
-export { createNpmInstallAction } from './install';
+export { createYarnInstallAction } from './install';

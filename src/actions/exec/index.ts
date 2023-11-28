@@ -1,1 +1,0 @@
-export { createNpmExecAction } from './exec';

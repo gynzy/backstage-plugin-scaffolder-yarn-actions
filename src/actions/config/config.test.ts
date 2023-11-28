@@ -1,20 +1,20 @@
 import { PassThrough } from "stream";
-import { createNpmConfigAction } from "./config";
+import { createYarnConfigAction } from "./config";
 import { getVoidLogger } from "@backstage/backend-common";
-import { executeShellCommand } from "@backstage/plugin-scaffolder-backend";
+import { executeShellCommand } from "@backstage/plugin-scaffolder-node";
 
-jest.mock("@backstage/plugin-scaffolder-backend", () => ({
-  ...jest.requireActual("@backstage/plugin-scaffolder-backend"),
+jest.mock("@backstage/plugin-scaffolder-node", () => ({
+  ...jest.requireActual("@backstage/plugin-scaffolder-node"),
   executeShellCommand: jest.fn(),
 }));
 
-describe("npm:exec", () => {
+describe("yarn:exec", () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   it("should call action", async () => {
-    const action = createNpmConfigAction();
+    const action = createYarnConfigAction();
 
     const logger = getVoidLogger();
 
@@ -31,14 +31,14 @@ describe("npm:exec", () => {
 
     expect(executeShellCommand).toHaveBeenCalledWith(
       expect.objectContaining({
-        command: expect.stringContaining("npm"),
+        command: expect.stringContaining("yarn"),
         args: expect.arrayContaining(["config"]),
       })
     );
   });
 
   it("should call action with given arguments", async () => {
-    const action = createNpmConfigAction();
+    const action = createYarnConfigAction();
 
     const logger = getVoidLogger();
 
@@ -57,7 +57,7 @@ describe("npm:exec", () => {
 
     expect(executeShellCommand).toHaveBeenCalledWith(
       expect.objectContaining({
-        command: expect.stringContaining("npm"),
+        command: expect.stringContaining("yarn"),
         args: expect.arrayContaining(["config", ...mockArgs]),
       })
     );

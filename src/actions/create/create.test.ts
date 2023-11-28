@@ -1,20 +1,20 @@
 import { PassThrough } from 'stream';
-import { createNpmInitAction } from './init';
+import { createYarnCreateAction } from './create';
 import { getVoidLogger } from '@backstage/backend-common';
-import { executeShellCommand } from '@backstage/plugin-scaffolder-backend';
+import { executeShellCommand } from '@backstage/plugin-scaffolder-node';
 
-jest.mock('@backstage/plugin-scaffolder-backend', () => ({
-  ...jest.requireActual('@backstage/plugin-scaffolder-backend'),
+jest.mock('@backstage/plugin-scaffolder-node', () => ({
+  ...jest.requireActual('@backstage/plugin-scaffolder-node'),
   executeShellCommand: jest.fn(),
 }));
 
-describe('npm:init', () => {
+describe('yarn:create', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   it('should call action', async () => {
-    const action = createNpmInitAction();
+    const action = createYarnCreateAction();
 
     const logger = getVoidLogger();
 
@@ -31,8 +31,8 @@ describe('npm:init', () => {
 
     expect(executeShellCommand).toHaveBeenCalledWith(
       expect.objectContaining({
-        command: expect.stringContaining('npm'),
-        args: expect.arrayContaining(['init', '-y']),
+        command: expect.stringContaining('yarn'),
+        args: expect.arrayContaining(['create']),
       }),
     );
   });

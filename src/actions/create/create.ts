@@ -4,27 +4,26 @@ import {
 } from '@backstage/plugin-scaffolder-node';
 import { getYarnCommand } from '../../utils/getYarnCommand';
 
-export function createYarnInstallAction() {
-  return createTemplateAction<{ arguments: string[] }>({
-    id: 'yarn:install',
+export function createYarnCreateAction() {
+  return createTemplateAction<{}>({
+    id: 'yarn:create',
     description:
-      'Runs yarn install in the task workspace directory',
-    supportsDryRun: false,
-    schema: {},
+      'Runs yarn create with defaults set in the task workspace directory',
+
     async handler(ctx) {
       try {
-        ctx.logger.info(`Running yarn install in ${ctx.workspacePath}`);
+        ctx.logger.info(`Running yarn create in ${ctx.workspacePath}`);
 
         const yarn = getYarnCommand(ctx);
 
         await executeShellCommand({
           command: yarn,
-          args: ['install'],
+          args: ['create'],
           logStream: ctx.logStream,
           options: { cwd: ctx.workspacePath },
         });
 
-        ctx.logger.info(`Done running yarn install`);
+        ctx.logger.info(`Done running yarn create`);
       } catch (err) {
         ctx.logger.error(err);
         throw err;

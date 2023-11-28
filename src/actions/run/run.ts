@@ -1,14 +1,14 @@
 import {
   createTemplateAction,
   executeShellCommand,
-} from '@backstage/plugin-scaffolder-backend';
-import { getNpmCommand } from '../../utils/getNpmCommand';
+} from '@backstage/plugin-scaffolder-node';
+import { getYarnCommand } from '../../utils/getYarnCommand';
 
-export function createNpmExecAction() {
+export function createYarnRunAction() {
   return createTemplateAction<{ arguments: string[] }>({
-    id: 'npm:exec',
+    id: 'yarn:run',
     description:
-      'Runs npm exec with the given arguments in the task workspace directory',
+      'Runs yarn run with the given arguments in the task workspace directory',
     supportsDryRun: true,
     schema: {
       input: {
@@ -17,7 +17,7 @@ export function createNpmExecAction() {
         properties: {
           arguments: {
             title: 'Arguments',
-            description: 'The arguments to pass to the npm exec command',
+            description: 'The arguments to pass to the yarn run command',
             type: 'array',
             items: {
               type: 'string',
@@ -27,24 +27,24 @@ export function createNpmExecAction() {
       },
     },
     async handler(ctx) {
+      if (ctx.input.arguments.length === 0) {
+        throw new Error('No arguments provided');
+      }
       try {
-        console.log(`Running npm exec in ${ctx.workspacePath}`);
-        ctx.logger.info(`Running npm exec in ${ctx.workspacePath}`);
+        ctx.logger.info(`Running yarn run in ${ctx.workspacePath}`);
         ctx.logger.info(`Input: ${ctx.input.arguments}`);
 
-        const npm = getNpmCommand(ctx);
+        const yarn = getYarnCommand(ctx);
 
         await executeShellCommand({
-          command: npm,
-          args: ['exec', ...ctx.input.arguments],
+          command: yarn,
+          args: ['run', ...ctx.input.arguments],
           logStream: ctx.logStream,
           options: { cwd: ctx.workspacePath },
         });
 
-        console.log('Done running npm exec');
-        ctx.logger.info(`Done running npm exec`);
+        ctx.logger.info(`Done running yarn run`);
       } catch (err) {
-        console.error(err);
         ctx.logger.error(err);
         throw err;
       }
